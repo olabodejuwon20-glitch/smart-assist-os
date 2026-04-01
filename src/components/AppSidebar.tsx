@@ -7,19 +7,9 @@ import {
   MessageSquare,
   Workflow,
   Cpu,
+  ChevronRight,
 } from "lucide-react";
-import { NavLink } from "@/components/NavLink";
-import { useLocation } from "react-router-dom";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "@/components/ui/sidebar";
+import { Link, useLocation } from "react-router-dom";
 
 const items = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
@@ -32,71 +22,118 @@ const items = [
 ];
 
 export function AppSidebar() {
-  const { state } = useSidebar();
-  const collapsed = state === "collapsed";
   const location = useLocation();
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border/50">
-      <SidebarContent className="bg-sidebar pt-4">
-        {/* Logo */}
-        <div className="px-4 pb-6 pt-2 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center glow-cyan">
-            <Cpu className="w-5 h-5 text-primary" />
+    <div
+      className="win-panel flex flex-col"
+      style={{
+        width: "180px",
+        minWidth: "180px",
+        backgroundColor: "var(--win-face)",
+        borderRight: "2px solid var(--win-shadow)",
+        borderLeft: "none",
+        borderTop: "none",
+        borderBottom: "none",
+        overflowY: "auto",
+      }}
+    >
+      {/* Explorer left panel header */}
+      <div
+        style={{
+          background: "linear-gradient(to bottom, #1464A0, #003087)",
+          padding: "8px 8px 12px",
+          color: "#FFF",
+        }}
+      >
+        <div className="flex items-center gap-2">
+          <div
+            style={{
+              width: "28px",
+              height: "28px",
+              backgroundColor: "rgba(255,255,255,0.2)",
+              border: "1px solid rgba(255,255,255,0.4)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Cpu className="w-4 h-4" style={{ color: "#FFF" }} />
           </div>
-          {!collapsed && (
-            <div>
-              <h1 className="font-display text-sm font-bold tracking-wider text-foreground glow-text-cyan">
-                AIOS
-              </h1>
-              <p className="text-[10px] text-muted-foreground tracking-widest uppercase">
-                Enterprise AI
-              </p>
-            </div>
-          )}
+          <div>
+            <div style={{ fontSize: "12px", fontWeight: 700, color: "#FFF" }}>AIOS</div>
+            <div style={{ fontSize: "9px", color: "#A0C8F0", letterSpacing: "1px" }}>ENTERPRISE AI</div>
+          </div>
         </div>
+      </div>
 
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => {
-                const active =
-                  item.url === "/"
-                    ? location.pathname === "/"
-                    : location.pathname.startsWith(item.url);
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <NavLink
-                        to={item.url}
-                        end={item.url === "/"}
-                        className={`relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
-                          active
-                            ? "bg-primary/10 text-primary border border-primary/20 glow-cyan"
-                            : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                        }`}
-                        activeClassName=""
-                      >
-                        <item.icon
-                          className={`w-5 h-5 shrink-0 ${
-                            active ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
-                          }`}
-                        />
-                        {!collapsed && (
-                          <span className="text-sm font-medium">{item.title}</span>
-                        )}
-                        {active && (
-                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-primary rounded-r" />
-                        )}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+      {/* Separator */}
+      <hr className="win-separator" style={{ margin: "2px 0" }} />
+
+      {/* Nav group label */}
+      <div style={{ padding: "4px 8px 2px", fontSize: "10px", fontWeight: 700, color: "#000080" }}>
+        Navigation
+      </div>
+
+      {/* Nav items */}
+      <div style={{ padding: "2px" }}>
+        {items.map((item) => {
+          const active =
+            item.url === "/"
+              ? location.pathname === "/"
+              : location.pathname.startsWith(item.url);
+          return (
+            <Link
+              key={item.title}
+              to={item.url}
+              style={{ textDecoration: "none" }}
+            >
+              <div
+                className={active ? "win-selected" : "win-nav-item"}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "3px 6px",
+                  fontSize: "11px",
+                  cursor: "default",
+                  color: active ? "#FFFFFF" : "#000000",
+                  backgroundColor: active ? "var(--win-selection)" : "transparent",
+                  borderLeft: active ? "2px solid #FFCC00" : "2px solid transparent",
+                }}
+              >
+                <item.icon
+                  className="w-4 h-4 shrink-0"
+                  style={{ color: active ? "#FFFFFF" : "#000080" }}
+                />
+                <span style={{ flex: 1 }}>{item.title}</span>
+                {active && <ChevronRight className="w-3 h-3" />}
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+
+      <hr className="win-separator" style={{ margin: "4px 6px" }} />
+
+      {/* My Computer section */}
+      <div style={{ padding: "4px 8px 2px", fontSize: "10px", fontWeight: 700, color: "#000080" }}>
+        System Info
+      </div>
+      <div style={{ padding: "4px 8px", fontSize: "10px", color: "#333" }}>
+        <div style={{ marginBottom: "4px" }}>
+          <div style={{ color: "#808080" }}>OS Version</div>
+          <div>AIOS 2000 SP4</div>
+        </div>
+        <div style={{ marginBottom: "4px" }}>
+          <div style={{ color: "#808080" }}>User</div>
+          <div>Administrator</div>
+        </div>
+        <div>
+          <div style={{ color: "#808080" }}>License</div>
+          <div style={{ color: "#000080" }}>Enterprise</div>
+        </div>
+      </div>
+    </div>
   );
 }
