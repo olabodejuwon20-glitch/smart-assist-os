@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import {
   ListTodo,
   FileText,
@@ -14,17 +13,17 @@ import {
 import { Link } from "react-router-dom";
 
 const kpis = [
-  { label: "Tasks Completed", value: "247", change: "+12%", icon: ListTodo, color: "text-primary" },
-  { label: "Docs Processed", value: "1,834", change: "+8%", icon: FileText, color: "text-purple-glow" },
-  { label: "Messages Sent", value: "562", change: "+23%", icon: MessageSquare, color: "text-success" },
-  { label: "Active Workflows", value: "18", change: "+3", icon: Workflow, color: "text-warning" },
+  { label: "Tasks Completed", value: "247", change: "+12%", icon: ListTodo },
+  { label: "Docs Processed", value: "1,834", change: "+8%", icon: FileText },
+  { label: "Messages Sent", value: "562", change: "+23%", icon: MessageSquare },
+  { label: "Active Workflows", value: "18", change: "+3", icon: Workflow },
 ];
 
 const quickActions = [
-  { label: "New Task", icon: Plus, href: "/tasks", color: "from-primary/20 to-primary/5 border-primary/20" },
-  { label: "Upload Doc", icon: FileText, href: "/documents", color: "from-purple-glow/20 to-purple-glow/5 border-purple-glow/20" },
-  { label: "AI Chat", icon: Bot, href: "/ai-command", color: "from-success/20 to-success/5 border-success/20" },
-  { label: "New Workflow", icon: Workflow, href: "/workflows", color: "from-warning/20 to-warning/5 border-warning/20" },
+  { label: "New Task", icon: Plus, href: "/tasks" },
+  { label: "Upload Doc", icon: FileText, href: "/documents" },
+  { label: "AI Chat", icon: Bot, href: "/ai-command" },
+  { label: "New Workflow", icon: Workflow, href: "/workflows" },
 ];
 
 const activities = [
@@ -36,111 +35,274 @@ const activities = [
   { text: "System performance report generated", time: "5 hrs ago", icon: TrendingUp },
 ];
 
-const container = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.06 } },
-};
-const item = {
-  hidden: { opacity: 0, y: 12 },
-  show: { opacity: 1, y: 0 },
-};
+const agents = [
+  { name: "Writer", status: "Idle", color: "#808080" },
+  { name: "Researcher", status: "Working", color: "#00AA00" },
+  { name: "Analyst", status: "Completed", color: "#0000AA" },
+  { name: "Executor", status: "Working", color: "#00AA00" },
+];
+
+// Win2k GroupBox component
+function GroupBox({ title, children, style }: { title: string; children: React.ReactNode; style?: React.CSSProperties }) {
+  return (
+    <fieldset
+      style={{
+        border: "none",
+        margin: 0,
+        padding: 0,
+        ...style,
+      }}
+    >
+      {/* Title bar mimicking groupbox */}
+      <div
+        style={{
+          background: "linear-gradient(to right, #000080, #1084D0)",
+          color: "#FFFFFF",
+          fontSize: "11px",
+          fontWeight: 700,
+          padding: "2px 6px",
+          marginBottom: "0",
+          display: "flex",
+          alignItems: "center",
+          gap: "4px",
+        }}
+      >
+        {title}
+      </div>
+      <div
+        style={{
+          border: "2px solid",
+          borderColor: "#808080 #FFFFFF #FFFFFF #808080",
+          backgroundColor: "var(--win-face)",
+          padding: "6px",
+        }}
+      >
+        {children}
+      </div>
+    </fieldset>
+  );
+}
 
 export default function Dashboard() {
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
-      {/* Welcome */}
-      <motion.div variants={item} className="glass rounded-2xl p-6 glow-cyan">
-        <div className="flex items-center justify-between">
+    <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontFamily: "'Tahoma', 'MS Sans Serif', Arial, sans-serif", fontSize: "11px" }}>
+
+      {/* Welcome panel */}
+      <GroupBox title="System Status — AIOS Enterprise Dashboard">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
-            <h1 className="font-display text-2xl font-bold tracking-wide text-foreground glow-text-cyan">
-              Welcome back, Admin
-            </h1>
-            <p className="text-muted-foreground mt-1 max-w-xl">
+            <div style={{ fontSize: "13px", fontWeight: 700, color: "#000080", marginBottom: "4px" }}>
+              Welcome back, Administrator
+            </div>
+            <div style={{ color: "#333", maxWidth: "600px", lineHeight: "1.5" }}>
               Your AI agents processed 47 tasks overnight. 3 workflows need your attention and 5 client follow-ups are pending.
-            </p>
+            </div>
           </div>
-          <div className="hidden lg:flex items-center gap-2 text-sm text-muted-foreground">
-            <Clock className="w-4 h-4" />
-            <span className="font-mono">{new Date().toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}</span>
+          <div
+            className="win-sunken flex items-center gap-1 px-2"
+            style={{ fontSize: "11px", height: "22px", backgroundColor: "#FFF", whiteSpace: "nowrap" }}
+          >
+            <Clock className="w-3 h-3" style={{ color: "#808080" }} />
+            <span style={{ fontFamily: "'Courier New', monospace" }}>
+              {new Date().toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" })}
+            </span>
           </div>
         </div>
-      </motion.div>
+      </GroupBox>
 
-      {/* KPIs */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {kpis.map((kpi, i) => (
-          <motion.div key={kpi.label} variants={item} className="glass rounded-xl p-5 hover:border-primary/30 transition-all duration-300 group">
-            <div className="flex items-center justify-between mb-3">
-              <kpi.icon className={`w-5 h-5 ${kpi.color}`} />
-              <span className="text-xs text-success font-mono flex items-center gap-0.5">
-                <TrendingUp className="w-3 h-3" /> {kpi.change}
-              </span>
+      {/* KPI row */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "6px" }}>
+        {kpis.map((kpi) => (
+          <div key={kpi.label} className="win-window" style={{ padding: 0, overflow: "hidden" }}>
+            {/* tiny title */}
+            <div style={{
+              backgroundColor: "#000080",
+              color: "#FFF",
+              fontSize: "10px",
+              padding: "1px 4px",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+            }}>
+              <kpi.icon className="w-3 h-3" />
+              {kpi.label}
             </div>
-            <p className="text-2xl font-bold font-display text-foreground">{kpi.value}</p>
-            <p className="text-xs text-muted-foreground mt-1">{kpi.label}</p>
-          </motion.div>
+            <div style={{ padding: "8px 8px 6px", textAlign: "center" }}>
+              <div style={{ fontSize: "22px", fontWeight: 700, color: "#000080", lineHeight: 1 }}>{kpi.value}</div>
+              <div
+                style={{
+                  marginTop: "4px",
+                  fontSize: "10px",
+                  color: "#006600",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "2px",
+                }}
+              >
+                <TrendingUp className="w-3 h-3" />
+                {kpi.change}
+              </div>
+            </div>
+          </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Quick Actions */}
-        <motion.div variants={item} className="lg:col-span-1 space-y-3">
-          <h2 className="font-display text-sm font-semibold tracking-wider text-muted-foreground uppercase">Quick Actions</h2>
-          <div className="grid grid-cols-2 gap-3">
-            {quickActions.map((action) => (
-              <Link
-                key={action.label}
-                to={action.href}
-                className={`glass rounded-xl p-4 flex flex-col items-center gap-2 bg-gradient-to-b ${action.color} border hover:scale-[1.03] transition-all duration-200`}
-              >
-                <action.icon className="w-6 h-6 text-foreground" />
-                <span className="text-xs font-medium text-foreground">{action.label}</span>
-              </Link>
-            ))}
-          </div>
+      {/* Lower section */}
+      <div style={{ display: "grid", gridTemplateColumns: "200px 1fr", gap: "6px" }}>
 
-          {/* Agent Status */}
-          <div className="glass rounded-xl p-4 mt-4">
-            <h3 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase mb-3">AI Agents</h3>
-            {[
-              { name: "Writer", status: "Idle", color: "bg-muted-foreground" },
-              { name: "Researcher", status: "Working", color: "bg-primary animate-pulse-glow" },
-              { name: "Analyst", status: "Completed", color: "bg-success" },
-              { name: "Executor", status: "Working", color: "bg-warning animate-pulse-glow" },
-            ].map((agent) => (
-              <div key={agent.name} className="flex items-center justify-between py-2">
-                <div className="flex items-center gap-2">
-                  <Zap className="w-3.5 h-3.5 text-purple-glow" />
-                  <span className="text-sm text-foreground">{agent.name}</span>
+        {/* Left column */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+
+          {/* Quick Actions */}
+          <GroupBox title="Quick Actions">
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px" }}>
+              {quickActions.map((action) => (
+                <Link key={action.label} to={action.href} style={{ textDecoration: "none" }}>
+                  <button
+                    className="win-btn"
+                    style={{
+                      width: "100%",
+                      minWidth: "unset",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "3px",
+                      padding: "6px 4px",
+                      fontSize: "10px",
+                      cursor: "default",
+                    }}
+                  >
+                    <action.icon className="w-5 h-5" style={{ color: "#000080" }} />
+                    {action.label}
+                  </button>
+                </Link>
+              ))}
+            </div>
+          </GroupBox>
+
+          {/* AI Agents */}
+          <GroupBox title="AI Agents Status">
+            <div>
+              {agents.map((agent) => (
+                <div
+                  key={agent.name}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "3px 2px",
+                    borderBottom: "1px solid #C0C0C0",
+                    fontSize: "11px",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                    <Zap className="w-3 h-3" style={{ color: "#000080" }} />
+                    <span>{agent.name}</span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                    <div style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: agent.color, border: "1px solid #404040" }} />
+                    <span style={{ color: "#555", fontSize: "10px" }}>{agent.status}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full ${agent.color}`} />
-                  <span className="text-xs text-muted-foreground">{agent.status}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
+              ))}
+            </div>
+          </GroupBox>
+        </div>
 
         {/* Activity Feed */}
-        <motion.div variants={item} className="lg:col-span-2">
-          <h2 className="font-display text-sm font-semibold tracking-wider text-muted-foreground uppercase mb-3">Recent Activity</h2>
-          <div className="glass rounded-xl divide-y divide-border/50">
+        <GroupBox title="Recent Activity Log">
+          <div className="win-listbox" style={{ height: "260px", overflow: "auto" }}>
+            {/* listview header */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 80px 16px",
+                gap: "4px",
+                padding: "2px 4px",
+                backgroundColor: "var(--win-face)",
+                borderBottom: "2px solid",
+                borderColor: "#FFFFFF #808080 #808080 #FFFFFF",
+                position: "sticky",
+                top: 0,
+              }}
+            >
+              <div className="win-raised" style={{ padding: "1px 4px", fontSize: "10px", fontWeight: 700 }}>Activity</div>
+              <div className="win-raised" style={{ padding: "1px 4px", fontSize: "10px", fontWeight: 700 }}>Time</div>
+              <div className="win-raised" style={{ padding: "1px 4px", fontSize: "10px", fontWeight: 700 }}>&nbsp;</div>
+            </div>
             {activities.map((activity, i) => (
-              <div key={i} className="flex items-start gap-3 p-4 hover:bg-muted/30 transition-colors">
-                <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center shrink-0 mt-0.5">
-                  <activity.icon className="w-4 h-4 text-primary" />
+              <div
+                key={i}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 80px 16px",
+                  gap: "4px",
+                  padding: "4px 4px",
+                  borderBottom: "1px solid #E0E0E0",
+                  alignItems: "center",
+                  backgroundColor: i % 2 === 0 ? "#FFFFFF" : "#F5F5F5",
+                  cursor: "default",
+                }}
+                className="win-nav-item"
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <div
+                    style={{
+                      width: "20px",
+                      height: "20px",
+                      backgroundColor: "#000080",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <activity.icon className="w-3 h-3" style={{ color: "#FFF" }} />
+                  </div>
+                  <span style={{ fontSize: "11px", color: "#000" }}>{activity.text}</span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-foreground">{activity.text}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5 font-mono">{activity.time}</p>
-                </div>
-                <ArrowUpRight className="w-4 h-4 text-muted-foreground shrink-0" />
+                <span style={{ fontSize: "10px", color: "#555", fontFamily: "'Courier New', monospace" }}>
+                  {activity.time}
+                </span>
+                <ArrowUpRight className="w-3 h-3" style={{ color: "#000080" }} />
               </div>
             ))}
           </div>
-        </motion.div>
+        </GroupBox>
       </div>
-    </motion.div>
+
+      {/* Windows 2000 status bar at bottom of content */}
+      <div
+        style={{
+          display: "flex",
+          gap: "4px",
+          borderTop: "1px solid var(--win-shadow)",
+          paddingTop: "3px",
+          marginTop: "2px",
+        }}
+      >
+        {[
+          "6 object(s)",
+          "Administrator",
+          "AIOS Enterprise v2.0.0",
+          "Licensed",
+        ].map((item, i) => (
+          <div
+            key={i}
+            className="win-sunken"
+            style={{
+              padding: "1px 6px",
+              fontSize: "10px",
+              backgroundColor: "var(--win-face)",
+              border: "1px solid",
+              borderColor: "#808080 #FFF #FFF #808080",
+            }}
+          >
+            {item}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
